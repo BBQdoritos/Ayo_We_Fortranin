@@ -14,6 +14,18 @@ program unbounded
 
     use dynllist
 
+    type, public :: linkedList
+        private
+            integer(ki4) :: size = 0_ki4 !should be the length of the LL
+            type(node), pointer :: head => null()
+            type(node), pointer :: tail => null()
+        contains
+        
+        procedure :: append
+        !need to implement other functions, will include later
+
+    end type linkedList
+
     implicit none
 
     character :: operation
