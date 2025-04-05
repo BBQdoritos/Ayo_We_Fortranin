@@ -4,8 +4,10 @@ program unbounded
 
     !Check list
         ! make sure that we can do addition, multiplication and all the good stuff
-
-        
+        ! deal with negatives somehow 
+        ! complete multiplication
+        ! complete division
+        ! complete factorial
 
     !Completed
         !valid operations (done!)
@@ -13,6 +15,7 @@ program unbounded
         !need to make sure that any input is either positive or negative (before doing this I need to implement the linked list)
         ! implement linked list
         ! print out the linked list
+        ! deal with if value2 > value1 in subtraction (and eventually with addition with negatives)
 
 
 !doing regular arithmetic starts from THE END, REVERSE THE LINKED LIST
@@ -31,6 +34,8 @@ program unbounded
     logical :: valid_operation, validOperant1, validOperation2, negativeOperand1, negativeOperand2
     character(len=100) :: firstOperand, secondOperand
     integer :: i, stringLengthFirst, stringLengthSecond, digit, listSize1, listSize2
+
+    logical :: negativeFlag
 
     valid_operation = .false.
     negativeOperand1 = .false.
@@ -190,20 +195,74 @@ program unbounded
     ! this is the check point, if we pad or not (only for addition?)
     ! ----------------------------------------------------------------------------------------
 
+    select case (operation)
+        case('+')
 
-    ! padding for operand1
-    do while (listSize1 < listSize2) 
-        call paddingZeros(headForOperand1)
-        listSize1 = listSize1 + 1
-    end do
+            !need to make cases for negative integers
+            ! with negative integers, just turns to subtraction, so we need to make a subtraction case first
 
-    ! padding for operand2
-    do while (listSize1 > listSize2) 
-        call paddingZeros(headForOperand2)
-        listSize2 = listSize2 + 1
-    end do
+            ! padding for operand1
+            do while (listSize1 < listSize2) 
+                call paddingZeros(headForOperand1)
+                listSize1 = listSize1 + 1
+            end do
 
-    call addition(headForOperand1, headForOperand2, resultHead)
+            ! padding for operand2
+            do while (listSize1 > listSize2) 
+                call paddingZeros(headForOperand2)
+                listSize2 = listSize2 + 1
+            end do
+
+            call addition(headForOperand1, headForOperand2, resultHead)
+
+        case('-')
+            !padding seems necessary for subtraction too
+            !seems to work if the first is larger than the second, need a way to solve for this
+
+            do while (listSize1 < listSize2) 
+                call paddingZeros(headForOperand1)
+                listSize1 = listSize1 + 1
+            end do
+
+            ! padding for operand2
+            do while (listSize1 > listSize2) 
+                call paddingZeros(headForOperand2)
+                listSize2 = listSize2 + 1
+            end do
+
+            call subtraction(headForOperand1, headForOperand2, resultHead, negativeFlag)
+
+        case('*')
+
+            ! Again, we have only worked with positives, negatives have not been implemented
+            do while (listSize1 < listSize2) 
+                call paddingZeros(headForOperand1)
+                listSize1 = listSize1 + 1
+            end do
+
+            ! padding for operand2
+            do while (listSize1 > listSize2) 
+                call paddingZeros(headForOperand2)
+                listSize2 = listSize2 + 1
+            end do
+
+            call multiplication(headForOperand1, headForOperand2, resultHead)
+
+        case('/')
+
+            ! need to check if zeros
+            
+
+            write(*,*) "Division works"
+            valid_operation = .true.
+        case('!')
+            write(*,*) "Factorial works"
+            valid_operation = .true.
+        case default
+            write(*,*) "Error: Invalid operation. Please try again."
+        end select    
+
+
 
     ! so what we need to do is to run through both lists parallelly, ensuring that we've padded
     ! the LL as needed, and then put that result into the result header, carrying any carryover into the next
@@ -213,7 +272,13 @@ program unbounded
 
 
     WRITE(*,*) "The result is: "
-    call printList(resultHead)
+    if (negativeFlag .eqv. .true.) then
+        write(*,'(A)', advance='no') '-'
+        call printReverse(resultHead)
+    else 
+        call printReverse(resultHead)
+    end if
+    WRITE(*,*)
 
 
 
